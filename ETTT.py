@@ -4,7 +4,7 @@ import signal
 import copy
 import time
 
-class Team50:
+class AI_Bot:
 
     def __init__(self):
         signal.signal(signal.SIGINT, self.shutdown)     # Shutdown on Ctrl+C
@@ -63,7 +63,7 @@ class Team50:
         self.corners = [ 0, 3,12,15]
         self.centers = [ 5, 6, 9,10]
         self.rest    = [ 1, 2, 4, 7, 8,11,13,14]
-        self.block_value = [[2, 3, 3, 2], [3, 4, 4, 3], [3, 4, 4, 3], [2, 3, 3, 2]
+        self.block_value = [[2, 3, 3, 2], [3, 4, 4, 3], [3, 4, 4, 3], [2, 3, 3, 2]]
 
         self.score = {'x':1, 'o':1, '-':1, 'd':1}
 
@@ -77,7 +77,7 @@ class Team50:
 
     def shutdown(self, signum, frame):
         print
-        print self.current_count
+        # print(self.current_count)
         sys.exit(0)
 
     def blocks_allowed(self, old_move, block_stat):
@@ -146,7 +146,7 @@ class Team50:
 
     def getBlockScore(self, block):
         # self.print_data("inside getBlockScore and printing block", block)
-    	block_tuple = tuple([tuple(block[i]) for i in range(4)])
+        block_tuple = tuple([tuple(block[i]) for i in range(4)])
         def util():
             best_score  = -100000
             moves = []
@@ -165,49 +165,49 @@ class Team50:
         return self.heur_dict[block_tuple]
 
     def getScore(self, a, b, block):
-    	score = 0
+        score = 0
         token_val = {self.flag : 1, self.opp_flag : 0, '-' : 1, 'd' : 0}
-    	row = block[a]
-    	if not self.opp_flag in row:
+        row = block[a]
+        if not self.opp_flag in row:
             # score += 3**(row.count(self.flag))
-    		# score += 2<<row.count(self.flag)
+        	# score += 2<<row.count(self.flag)
             temp_val = []
 
-    	col = [block[i][b] for i in range(4)]
-    	if not self.opp_flag in col:
+        col = [block[i][b] for i in range(4)]
+        if not self.opp_flag in col:
             # score += 3**(col.count(self.flag))
-    		score += 2<<col.count(self.flag)
+        	score += 2<<col.count(self.flag)
 
-    	dLis = [(0, 1), (0, -1), (1, 0), (-1, 0)]
-    	cLis = [[(i+x+1, j+y+1) for (x,y) in dLis] for i in range(2) for j in range(2)]
+        dLis = [(0, 1), (0, -1), (1, 0), (-1, 0)]
+        cLis = [[(i+x+1, j+y+1) for (x,y) in dLis] for i in range(2) for j in range(2)]
 
-    	tLis = list(filter(lambda l: (a,b) in l,cLis))
+        tLis = list(filter(lambda l: (a,b) in l,cLis))
 
-    	for dim in tLis:
-    		vset = [block[i][j] for (i,j) in dim]
-    		if not self.opp_flag in vset:
-    			# score += 3**(vset.count(self.flag))
-    			score += 2<<vset.count(self.flag)
+        for dim in tLis:
+        	vset = [block[i][j] for (i,j) in dim]
+        	if not self.opp_flag in vset:
+        		# score += 3**(vset.count(self.flag))
+        		score += 2<<vset.count(self.flag)
 
         row = block[a]
-    	if not self.flag in row:
+        if not self.flag in row:
             # score += 3**(row.count(self.opp_flag))
-    		score += 2<<row.count(self.opp_flag)
-    	col = [block[i][b] for i in range(4)]
-    	if not self.flag in col:
+        	score += 2<<row.count(self.opp_flag)
+        col = [block[i][b] for i in range(4)]
+        if not self.flag in col:
             # score += 3**(col.count(self.opp_flag))
-    		score += 2<<col.count(self.opp_flag)
+        	score += 2<<col.count(self.opp_flag)
 
-    	dLis = [(0, 1), (0, -1), (1, 0), (-1, 0)]
-    	cLis = [[(i+x+1, j+y+1) for (x,y) in dLis] for i in range(2) for j in range(2)]
+        dLis = [(0, 1), (0, -1), (1, 0), (-1, 0)]
+        cLis = [[(i+x+1, j+y+1) for (x,y) in dLis] for i in range(2) for j in range(2)]
 
-    	tLis = list(filter(lambda l: (a,b) in l,cLis))
+        tLis = list(filter(lambda l: (a,b) in l,cLis))
 
-    	for dim in tLis:
-    		vset = [block[i][j] for (i,j) in dim]
-    		if not self.flag in vset:
-    			# score += 3**(vset.count(self.opp_flag))
-    			score += 2<<vset.count(self.opp_flag)
+        for dim in tLis:
+        	vset = [block[i][j] for (i,j) in dim]
+        	if not self.flag in vset:
+        		# score += 3**(vset.count(self.opp_flag))
+        		score += 2<<vset.count(self.opp_flag)
 
         return score
 
@@ -281,7 +281,7 @@ class Team50:
             boardScore.append(self.lineScore(line, node_score, opp_node_score, temp_block))
 
         dLis = [(0, 1), (0, -1), (1, 0), (-1, 0)]
-    	cLis = [[(i+x+1, j+y+1) for (x,y) in dLis] for i in range(2) for j in range(2)]
+        cLis = [[(i+x+1, j+y+1) for (x,y) in dLis] for i in range(2) for j in range(2)]
 
         for line in cLis:
             boardScore.append(self.lineScore(line, node_score, opp_node_score, temp_block))
@@ -405,9 +405,9 @@ class Team50:
             return v, ret_mov
 
     def print_data(self, title, data):
-        print "XXXXXXXXXXXXXXXXXXXXXXXX"
-        print title, data
-        print "XXXXXXXXXXXXXXXXXXXXXXXX"
+        print("XXXXXXXXXXXXXXXXXXXXXXXX")
+        print(title, data)
+        print("XXXXXXXXXXXXXXXXXXXXXXXX")
 
     def move(self, current_board, old_move, flag):
         if old_move == (-1, -1):

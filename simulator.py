@@ -3,6 +3,7 @@ import random
 import signal
 import time
 import copy
+import ETTT
 
 TIME = 30
 MAX_PTS = 68
@@ -11,7 +12,7 @@ class TimedOutExc(Exception):
 	pass
 
 def handler(signum, frame):
-	#print 'Signal handler called with signal', signum
+	#print('Signal handler called with signal', signum)
 	raise TimedOutExc()
 
 class Random_Player():
@@ -22,17 +23,17 @@ class Random_Player():
 		#You have to implement the move function with the same signature as this
 		#Find the list of valid cells allowed
 		print
-		print "finding valid moves..."
+		print("finding valid moves...")
 		cells = board.find_valid_move_cells(old_move)
 		print
-		print "valid moves found!"
+		print("valid moves found!")
 		return cells[random.randrange(len(cells))]
 
 class Manual_Player:
 	def __init__(self):
 		pass
 	def move(self, board, old_move, flag):
-		print 'Enter your move: <format:row column> (you\'re playing with', flag + ")"
+		print('Enter your move: <format:row column> (you\'re playing with', flag + ")")
 		mvp = raw_input()
 		mvp = mvp.split()
 		return (int(mvp[0]), int(mvp[1]))
@@ -47,23 +48,23 @@ class Board:
 
 	def print_board(self):
 		# for printing the state of the board
-		print '==============Board State=============='
+		print('==============Board State==============')
 		for i in range(16):
 			if i%4 == 0:
 				print
 			for j in range(16):
 				if j%4 == 0:
-					print "",
-				print self.board_status[i][j],
+					print("",)
+				print(self.board_status[i][j],)
 			print
 		print
 
-		print '==============Block State=============='
+		print('==============Block State==============')
 		for i in range(4):
 			for j in range(4):
-				print self.block_status[i][j],
+				print(self.block_status[i][j],)
 			print
-		print '======================================='
+		print('=======================================')
 		print
 		print
 
@@ -106,7 +107,7 @@ class Board:
 		for i in range(4):
 			row = bs[i]							#i'th row
 			col = [x[i] for x in bs]			#i'th column
-			#print row,col
+			#print(row,col)
 			#checking if i'th row or i'th column has been won or not
 			if (row[0] =='x' or row[0] == 'o') and (row.count(row[0]) == 4):
 				return (row[0],'WON')
@@ -199,7 +200,7 @@ def player_turn(game_board, old_move, obj, ply, opp, flg):
 		try:									#try to get player 1's move
 			p_move = obj.move(game_board, old_move, flg)
 		except TimedOutExc:					#timeout error
-#			print e
+#			print(e)
 			WINNER = opp
 			MESSAGE = 'TIME OUT'
 			pts[opp] = MAX_PTS
@@ -226,7 +227,7 @@ def player_turn(game_board, old_move, obj, ply, opp, flg):
 			return p_move, WINNER, MESSAGE, pts["P1"], pts["P2"], True, False
 
 		status = game_board.find_terminal_state()		#find if the game has ended and if yes, find the winner
-		print status
+		print(status)
 		if status[1] == 'WON':							#if the game has ended after a player1 move, player 1 would win
 			pts[ply] = MAX_PTS
 			WINNER = ply
@@ -291,8 +292,8 @@ def gameplay(obj1, obj2):				#game simulator
 
 	game_board.print_board()
 
-	print "Winner:", WINNER
-	print "Message", MESSAGE
+	print("Winner:", WINNER)
+	print("Message", MESSAGE)
 
 	x = 0
 	d = 0
@@ -305,7 +306,7 @@ def gameplay(obj1, obj2):				#game simulator
 				o += 1
 			if game_board.block_status[i][j] == 'd':
 				d += 1
-	print 'x:', x, ' o:',o,' d:',d
+	print('x:', x, ' o:',o,' d:',d)
 	if MESSAGE == 'DRAW':
 
 		for i in range(4):
@@ -346,10 +347,11 @@ def is_corner(row, col):
 if __name__ == '__main__':
 
 	if len(sys.argv) != 2:
-		print 'Usage: python simulator.py <option>'
-		print '<option> can be 1 => Random player vs. Random player'
-		print '                2 => Human vs. Random Player'
-		print '                3 => Human vs. Human'
+		print('Usage: python simulator.py <option>')
+		print('<option> can be 1 => Random player vs. Random player')
+		print('                2 => Human vs. Random Player')
+		print('                3 => Human vs. BOT')
+		print('                4 => Human vs. Human')
 		sys.exit(1)
 
 	obj1 = ''
@@ -358,17 +360,19 @@ if __name__ == '__main__':
 	if option == '1':
 		obj1 = Random_Player()
 		obj2 = Random_Player()
-
 	elif option == '2':
 		obj1 = Random_Player()
 		obj2 = Manual_Player()
 	elif option == '3':
+	    obj1 = Manual_Player()
+    	# obj2 = ETTT.AI_Bot()
+	elif option == '4':
 		obj1 = Manual_Player()
 		obj2 = Manual_Player()
 	else:
-		print 'Invalid option'
+		print('Invalid option')
 		sys.exit(1)
 
 	x = gameplay(obj1, obj2)
-	print "Player 1 points:", x[0]
-	print "Player 2 points:", x[1]
+	print("Player 1 points:", x[0])
+	print("Player 2 points:", x[1])
